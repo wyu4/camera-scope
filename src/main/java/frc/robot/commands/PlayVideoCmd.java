@@ -23,6 +23,8 @@ public class PlayVideoCmd extends Command {
   private final boolean logAscii;
   private int currentFrame = 0;
 
+  private Double lastFrameTimestamp;
+
   /** Creates a new PlayVideo. */
   public PlayVideoCmd(VideoPlayer videoPlayer) {
     this(videoPlayer, videoPlayer.getPoses());
@@ -47,6 +49,7 @@ public class PlayVideoCmd extends Command {
   public void initialize() {
     videoPlayer.resetPoses();
     currentFrame = 0;
+    lastFrameTimestamp = null;
     timer.restart();
     Logger.recordOutput("VideoPlayer/Display/Head", currentFrame);
   }
@@ -57,6 +60,12 @@ public class PlayVideoCmd extends Command {
     if (!videoPlayer.isAllowed()) {
       return;
     }
+
+    if (lastFrameTimestamp == null) {
+      lastFrameTimestamp = Timer.getFPGATimestamp();
+      return;
+    }
+
     if (timer.hasElapsed(SimulationVideoConstants.kDisplayDeltaSeconds)) {
       timer.restart();
       Boolean[][] status = videoPlayer.getChunkStatus(currentFrame);
@@ -79,7 +88,11 @@ public class PlayVideoCmd extends Command {
       }
       logAscii(currentFrame + "\n" + consoleScreen);
       currentFrame++;
+
+      
       Logger.recordOutput("VideoPlayer/Display/Head", currentFrame);
+      Logger.recordOutput("VideoPlayer/Display/RealDeltaSeconds", Timer.getFPGATimestamp() - lastFrameTimestamp);
+      lastFrameTimestamp = Timer.getFPGATimestamp();
     }
   }
 
