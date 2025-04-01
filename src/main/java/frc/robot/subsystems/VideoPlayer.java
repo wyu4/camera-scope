@@ -20,8 +20,9 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.RotatedRect;
 import org.opencv.imgproc.Imgproc;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -33,7 +34,7 @@ public class VideoPlayer extends SubsystemBase {
   private final String videoPath;
   private final List<Boolean[][]> chunkStatus = new ArrayList<>();
   private final List<Double[][]> chunkDegrees = new ArrayList<>();
-  private final List<Pose2d> poses = new ArrayList<>();
+  private final List<Pose3d> poses = new ArrayList<>();
   private volatile boolean processing = false;
 
   /**
@@ -54,7 +55,7 @@ public class VideoPlayer extends SubsystemBase {
   public void periodic() {
     Logger.recordOutput("VideoPlayer/IsAllowed", isAllowed());
     if (isAllowed()) {
-      Pose2d[] poseArray = new Pose2d[poses.size()];
+      Pose3d[] poseArray = new Pose3d[poses.size()];
       poses.toArray(poseArray);
       Logger.recordOutput("VideoPlayer/Display/Chunks", poseArray);
     }
@@ -144,10 +145,11 @@ public class VideoPlayer extends SubsystemBase {
             status[y][x] = chunkStatus;
 
             degrees[y][x] = 0D;
-            if (chunkStatus && brightPixels < totalPixels) {
-              degrees[y][x] = calculateHeading(chunk);
+            if (SimulationVideoConstants.kRotations) {
+              if (chunkStatus && brightPixels < totalPixels) {
+                degrees[y][x] = calculateHeading(chunk);
+              }
             }
-
             chunkCount++;
           }
         }
@@ -239,18 +241,18 @@ public class VideoPlayer extends SubsystemBase {
    * 
    * @param x X-axis
    * @param y Y-axis
-   * @return New {@code Pose2d} object
+   * @return New {@code Pose3d} object
    */
-  public Pose2d calculateDefaultPose(int x, int y) {
-    return new Pose2d(
+  public Pose3d calculateDefaultPose(int x, int y) {
+    return new Pose3d(
         (FieldConstants.kFieldLengthX / 2) + (x * SimulationVideoConstants.kDisplayGapMeters)
             - (SimulationVideoConstants.kDisplayWidthMeters / 2)
             + SimulationVideoConstants.kDisplayOffsetX,
         FieldConstants.kFieldWidthY
             - ((FieldConstants.kFieldWidthY / 2) + (y * SimulationVideoConstants.kDisplayGapMeters)
                 - (SimulationVideoConstants.kDisplayHeightMeters / 2)
-                + SimulationVideoConstants.kDisplayOffsetY),
-        Rotation2d.kZero);
+                + SimulationVideoConstants.kDisplayOffsetY), 0,
+        Rotation3d.kZero);
   }
 
   /**
@@ -293,9 +295,9 @@ public class VideoPlayer extends SubsystemBase {
   /**
    * Get the list of poses being plotted on the field.
    * 
-   * @return {@code ArrayList} of {@code Pose2d}s
+   * @return {@code ArrayList} of {@code Pose3d}s
    */
-  public List<Pose2d> getPoses() {
+  public List<Pose3d> getPoses() {
     return poses;
   }
 

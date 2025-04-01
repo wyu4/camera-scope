@@ -8,6 +8,8 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.SimulationVideoConstants;
 import frc.robot.commands.PlayVideoCmd;
@@ -32,6 +34,7 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     videoPlayer = new VideoPlayer(SimulationVideoConstants.kInputSourceLocation);
+    Logger.recordOutput("ExtraData/7476/ArmPose", new Pose3d(0.3175, 0, 0.717551, Rotation3d.kZero));
   }
 
   /**

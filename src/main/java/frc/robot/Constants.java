@@ -24,15 +24,19 @@ public final class Constants {
 
   public static class SimulationVideoConstants {
     public static final String kInputSourceLocation = "BadApple.mp4"; // Video path relative to the deploy folder.
-    public static final int kDisplayColumns = 48;
-    public static final int kDisplayRows = 36;
-    public static final double kDisplayOffsetX = 0;
-    public static final double kDisplayOffsetY = 0;
-    public static final double kDisplayGapMeters = 0.5;
+    public static final int kDisplayColumns = 48; // Number of chunks on x-axis
+    public static final int kDisplayRows = 36; // Numbers of chunks on y-axis
+    public static final double kDisplayOffsetX = 0; // Offset X
+    public static final double kDisplayOffsetY = 0; // Offset Y
+    public static final double kDisplayGapMeters = 0.5; // Gap between chunks
+    public static final double kDisplayDeltaSeconds = 1.0/30.0; // FPS
+
+    public static final boolean kRotations = true; // Enables rotations. Will increase processing time.
+    public static final boolean kInverted = false; // Invert enabled/disabled chunks
+    public static final boolean kLogAscii = false; // Log an ascii representation of which chunks are enabled
+
+    // REAL display dimensions. Helps with alignments
     public static final double kDisplayWidthMeters = (kDisplayColumns - 1) * kDisplayGapMeters;
     public static final double kDisplayHeightMeters = (kDisplayRows - 1) * kDisplayGapMeters;
-    public static final double kDisplayDeltaSeconds = (1.0/30.0);
-    public static final boolean kInverted = false;
-    public static final boolean kLogAscii = false;
   }
 }

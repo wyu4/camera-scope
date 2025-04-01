@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SimulationVideoConstants;
@@ -19,7 +19,7 @@ import frc.robot.subsystems.VideoPlayer;
 public class PlayVideoCmd extends Command {
   private final VideoPlayer videoPlayer;
   private final Timer timer = new Timer();
-  private final List<Pose2d> poses;
+  private final List<Pose3d> poses;
   private final boolean logAscii;
   private int currentFrame = 0;
 
@@ -31,12 +31,12 @@ public class PlayVideoCmd extends Command {
   }
 
   /** Creates a new PlayVideo. */
-  public PlayVideoCmd(VideoPlayer videoPlayer, List<Pose2d> poses) {
+  public PlayVideoCmd(VideoPlayer videoPlayer, List<Pose3d> poses) {
     this(videoPlayer, poses, SimulationVideoConstants.kLogAscii);
   }
 
   /** Creates a new PlayVideo. */
-  public PlayVideoCmd(VideoPlayer videoPlayer, List<Pose2d> poses, boolean logAscii) {
+  public PlayVideoCmd(VideoPlayer videoPlayer, List<Pose3d> poses, boolean logAscii) {
     this.videoPlayer = videoPlayer;
     this.poses = poses;
     this.logAscii = logAscii;
@@ -75,15 +75,15 @@ public class PlayVideoCmd extends Command {
         consoleScreen += "\n";
         Boolean[] row = status[y];
         for (int x = 0; x < row.length; x++) {
-          Pose2d defaultPose = videoPlayer.calculateDefaultPose(x, y);
+          Pose3d defaultPose = videoPlayer.calculateDefaultPose(x, y);
           Boolean chunkEnabled = (row[x] == null ? false : row[x]);
 
           poses.set((y * SimulationVideoConstants.kDisplayColumns) + x,
-              chunkEnabled ? new Pose2d(defaultPose.getX(), defaultPose.getY(), Rotation2d.fromDegrees(degrees[y][x]))
-                  : new Pose2d(defaultPose.getX() + SimulationVideoConstants.kDisplayWidthMeters + 100,
-                      defaultPose.getY() + SimulationVideoConstants.kDisplayHeightMeters + 100,
+              chunkEnabled ? new Pose3d(defaultPose.getX(), defaultPose.getY(), 0, new Rotation3d(0, 0, degrees[y][x]))
+                  : new Pose3d(defaultPose.getX() + SimulationVideoConstants.kDisplayWidthMeters + 100,
+                      defaultPose.getY() + SimulationVideoConstants.kDisplayHeightMeters + 100, 100,
                       defaultPose.getRotation()));
-          consoleScreen += chunkEnabled ? "###" : "   ";
+          consoleScreen += chunkEnabled ? "#" : " ";
         }
       }
       logAscii(currentFrame + "\n" + consoleScreen);
