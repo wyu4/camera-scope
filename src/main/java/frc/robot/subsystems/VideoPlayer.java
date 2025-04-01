@@ -144,7 +144,7 @@ public class VideoPlayer extends SubsystemBase {
             status[y][x] = chunkStatus;
 
             degrees[y][x] = 0D;
-            if (chunkStatus && !(brightPixels >= (int) (totalPixels * 0.95f))) {
+            if (chunkStatus && brightPixels < totalPixels) {
               degrees[y][x] = calculateHeading(chunk);
             }
 
